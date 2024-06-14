@@ -1,4 +1,4 @@
-import { createStore } from 'redux';
+import { combineReducers, createStore } from 'redux';
 import { devToolsEnhancer } from '@redux-devtools/extension';
 
 import { nanoid } from 'nanoid';
@@ -35,25 +35,47 @@ export const deleteContact = ContactId => {
   };
 };
 
-const rootReducer = (state = initialState, action) => {
+export const filterContact = filter => {
+  return {
+    type: 'filters/filterContacts',
+    payload: filter,
+  };
+};
+
+const contactsReducer = (state = initialState.contacts, action) => {
   switch (action.type) {
     case 'contacts/addContact':
       return {
         ...state,
-        contacts: { items: [...state.contacts.items, action.payload] },
+        items: [...state.items, action.payload],
       };
 
     case 'contacts/deleteContact':
       return {
         ...state,
-        contacts: {
-          items: state.contacts.items.filter(item => item.id !== action.payload),
-        },
+        items: state.items.filter(item => item.id !== action.payload),
       };
     default:
       return state;
   }
 };
+
+const filterReducer = (state = initialState.filters, action) => {
+  switch (action.type) {
+    case 'filters/filterContacts':
+      return {
+        ...state,
+        name: action.payload,
+      };
+    default:
+      return state;
+  }
+};
+
+const rootReducer = combineReducers({
+  contacts: contactsReducer,
+  filters: filterReducer,
+});
 
 const enhancer = devToolsEnhancer();
 export const store = createStore(rootReducer, enhancer);
