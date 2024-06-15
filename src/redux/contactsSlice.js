@@ -1,5 +1,19 @@
 import { nanoid } from 'nanoid';
-import { initialState } from './store';
+import { initialState } from './initialState';
+
+export const addContact = ({ name, number }) => ({
+  type: 'contacts/addContact',
+  payload: {
+    id: nanoid(),
+    name,
+    number,
+  },
+});
+
+export const deleteContact = ContactId => ({
+  type: 'contacts/deleteContact',
+  payload: ContactId,
+});
 
 export const contactsReducer = (state = initialState.contacts, action) => {
   switch (action.type) {
@@ -8,7 +22,6 @@ export const contactsReducer = (state = initialState.contacts, action) => {
         ...state,
         items: [...state.items, action.payload],
       };
-
     case 'contacts/deleteContact':
       return {
         ...state,
@@ -17,22 +30,4 @@ export const contactsReducer = (state = initialState.contacts, action) => {
     default:
       return state;
   }
-};
-
-export const addContact = ({ name, number }) => {
-  return {
-    type: 'contacts/addContact',
-    payload: {
-      id: nanoid(),
-      name,
-      number,
-    },
-  };
-};
-
-export const deleteContact = ContactId => {
-  return {
-    type: 'contacts/deleteContact',
-    payload: ContactId,
-  };
 };
